@@ -1,9 +1,20 @@
 import React from "react";
 
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import AddInterns from "./pages/AddInterns";
+import ViewInterns from "./pages/ViewInterns";
+
 const App = () => {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/add" element={<AddInterns />} />
+          <Route path="/view" element={<ViewInterns />} />
+        </Routes>
+      </Router>
     </div>
   );
 };
