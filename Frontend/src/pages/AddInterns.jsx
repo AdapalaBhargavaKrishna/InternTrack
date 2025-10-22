@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Save, User, Building, UserCheck, Calendar, Eye } from "lucide-react";
+import { Save, User, Building, UserCheck, Calendar, Eye, Loader2 } from "lucide-react";
+import axios from "axios";
+
+const API_URL = "http://localhost:5000/api/internships";
 
 const AddInterns = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +21,9 @@ const AddInterns = () => {
     mentorContact: "",
     mentorRole: "",
   });
+  
+  const [loading, setLoading] = useState(false);
+  const [formMessage, setFormMessage] = useState(null);
 
   const departments = [
     "Computer Science",
@@ -72,9 +78,40 @@ const AddInterns = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setLoading(true);
+    setFormMessage(null);
+
+    try {
+      const response = await axios.post(API_URL, formData);
+      
+      console.log("Form submitted successfully:", response.data);
+      setFormMessage({ type: 'success', text: 'Internship Record Saved!' });
+      
+      setFormData({
+        studentName: "",
+        rollNumber: "",
+        department: "",
+        email: "",
+        companyName: "",
+        location: "",
+        startDate: "",
+        endDate: "",
+        duration: "",
+        stipend: "",
+        mentorName: "",
+        mentorContact: "",
+        mentorRole: "",
+      });
+
+    } catch (error) {
+      const message = error.response?.data?.message || "Failed to save record. Please try again.";
+      console.error("Error submitting form:", error.response?.data || error.message);
+      setFormMessage({ type: 'error', text: message });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleViewRecords = () => {
@@ -83,7 +120,7 @@ const AddInterns = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
-      <motion.button
+       <motion.button
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         whileHover={{ scale: 1.05 }}
@@ -94,6 +131,7 @@ const AddInterns = () => {
         <Eye className="w-4 h-4" />
         <span>View Records</span>
       </motion.button>
+
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -116,6 +154,7 @@ const AddInterns = () => {
           className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/60 overflow-hidden"
         >
           <form onSubmit={handleSubmit} className="p-8">
+            
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -324,7 +363,7 @@ const AddInterns = () => {
                 </div>
               </div>
             </motion.div>
-
+            
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -393,6 +432,20 @@ const AddInterns = () => {
               </div>
             </motion.div>
 
+            {formMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-4 rounded-lg mb-6 text-center font-medium ${
+                  formMessage.type === 'success'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-red-100 text-red-700'
+                }`}
+              >
+                {formMessage.text}
+              </motion.div>
+            )}
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -401,15 +454,26 @@ const AddInterns = () => {
             >
               <motion.button
                 type="submit"
+                disabled={loading}
                 whileHover={{
-                  scale: 1.02,
-                  boxShadow: "0 10px 30px -10px rgba(79, 70, 229, 0.5)",
+                  scale: loading ? 1 : 1.02,
+                  boxShadow: loading ? "none" : "0 10px 30px -10px rgba(79, 70, 229, 0.5)",
                 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold text-lg shadow-lg"
+                whileTap={{ scale: loading ? 1 : 0.98 }}
+                className={`flex items-center space-x-3 px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl transition-all duration-200 font-semibold text-lg shadow-lg ${
+                  loading 
+                    ? "opacity-70 cursor-not-allowed" 
+                    : "hover:from-blue-700 hover:to-indigo-700"
+                }`}
               >
-                <Save className="w-5 h-5" />
-                <span>Save Internship Record</span>
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Save className="w-5 h-5" />
+                )}
+                <span>
+                  {loading ? "Saving..." : "Save Internship Record"}
+                </span>
               </motion.button>
             </motion.div>
           </form>
@@ -420,3 +484,4 @@ const AddInterns = () => {
 };
 
 export default AddInterns;
+
