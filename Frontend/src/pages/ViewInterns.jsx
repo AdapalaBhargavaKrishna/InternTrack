@@ -5,6 +5,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import API from "../api";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import {
   Edit2,
   Trash2,
@@ -45,7 +46,7 @@ const ViewInterns = () => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const navigate = useNavigate();
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const departments = [
