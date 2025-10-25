@@ -59,6 +59,25 @@ const ViewInterns = () => {
 
   const itemsPerPageOptions = [5, 10, 20, 50];
 
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      try {
+        const res = await API.post("/auth/validate", { token });
+        if (!res.data.valid) {
+          navigate("/login");
+        }
+      } catch (err) {
+        navigate("/login");
+      }
+    };
+    validateToken();
+  }, []);
+
   const fetchAllInterns = async () => {
     setLoading(true);
     try {
