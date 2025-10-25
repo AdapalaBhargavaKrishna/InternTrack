@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import API from "../api";
 import toast from "react-hot-toast";
 import {
   Edit2,
@@ -21,8 +21,6 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
-
-const API_URL = "http://localhost:5000/api/internships";
 
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -64,7 +62,7 @@ const ViewInterns = () => {
   const fetchAllInterns = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(API_URL);
+      const response = await API.get("/internships");
       setAllInterns(response.data);
       toast.success(`Loaded ${response.data.length} records`);
     } catch (error) {
@@ -120,7 +118,7 @@ const ViewInterns = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await API.delete(`internships/${id}`);
       toast.success("Record deleted successfully!");
       setDeleteConfirm(null);
       setAllInterns((prevInterns) =>
@@ -161,7 +159,7 @@ const ViewInterns = () => {
       delete payload.createdAt;
       delete payload.updatedAt;
 
-      const response = await axios.put(`${API_URL}/${editingId}`, payload);
+      const response = await API.put(`internships/${editingId}`, payload);
       toast.success("Record updated successfully!");
 
       setAllInterns((prevInterns) =>

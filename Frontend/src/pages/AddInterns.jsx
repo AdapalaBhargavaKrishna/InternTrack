@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Save, User, Building, UserCheck, Calendar, Eye, Loader2 } from "lucide-react";
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/internships";
+import {
+  Save,
+  User,
+  Building,
+  UserCheck,
+  Calendar,
+  Eye,
+  Loader2,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import API from "../api";
 
 const AddInterns = () => {
   const [formData, setFormData] = useState({
@@ -21,10 +28,8 @@ const AddInterns = () => {
     mentorContact: "",
     mentorRole: "",
   });
-  
   const [loading, setLoading] = useState(false);
   const [formMessage, setFormMessage] = useState(null);
-
   const departments = [
     "Computer Science",
     "Electrical Engineering",
@@ -33,6 +38,26 @@ const AddInterns = () => {
     "Business Administration",
     "Information Technology",
   ];
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      try {
+        const res = await API.post("/auth/validate", { token });
+        if (!res.data.valid) {
+          navigate("/login");
+        }
+      } catch (err) {
+        navigate("/login");
+      }
+    };
+    validateToken();
+  }, []);
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -52,30 +77,18 @@ const AddInterns = () => {
           durationText = `${weeks} weeks (${daysDiff} days)`;
         }
 
-        setFormData((prev) => ({
-          ...prev,
-          duration: durationText,
-        }));
+        setFormData((prev) => ({ ...prev, duration: durationText }));
       } else {
-        setFormData((prev) => ({
-          ...prev,
-          duration: "Invalid date range",
-        }));
+        setFormData((prev) => ({ ...prev, duration: "Invalid date range" }));
       }
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        duration: "",
-      }));
+      setFormData((prev) => ({ ...prev, duration: "" }));
     }
   }, [formData.startDate, formData.endDate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -84,11 +97,8 @@ const AddInterns = () => {
     setFormMessage(null);
 
     try {
-      const response = await axios.post(API_URL, formData);
-      
-      console.log("Form submitted successfully:", response.data);
-      setFormMessage({ type: 'success', text: 'Internship Record Saved!' });
-      
+      const response = await API.post("/internships", formData);
+      setFormMessage({ type: "success", text: "Internship Record Saved!" });
       setFormData({
         studentName: "",
         rollNumber: "",
@@ -104,34 +114,33 @@ const AddInterns = () => {
         mentorContact: "",
         mentorRole: "",
       });
-
     } catch (error) {
-      const message = error.response?.data?.message || "Failed to save record. Please try again.";
-      console.error("Error submitting form:", error.response?.data || error.message);
-      setFormMessage({ type: 'error', text: message });
+      const message =
+        error.response?.data?.message ||
+        "Failed to save record. Please try again.";
+      setFormMessage({ type: "error", text: message });
     } finally {
       setLoading(false);
     }
   };
 
   const handleViewRecords = () => {
-    window.location.href = "/view";
+    navigate("/view");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
-       <motion.button
+      <motion.button
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleViewRecords}
-        className="fixed top-6 right-6 z-50 flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white rounded-xl hover:bg-gray-700 transition-colors font-medium shadow-lg border border-gray-500"
+        className="fixed top-6 right-6 z-50 flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white rounded-xl transition-colors font-medium shadow-lg border border-gray-500"
       >
         <Eye className="w-4 h-4" />
         <span>View Records</span>
       </motion.button>
-
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -154,7 +163,6 @@ const AddInterns = () => {
           className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/60 overflow-hidden"
         >
           <form onSubmit={handleSubmit} className="p-8">
-            
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -343,7 +351,7 @@ const AddInterns = () => {
 
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
-                    Duration (Auto-calculated)
+                    Duration
                   </label>
                   <div className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 shadow-sm">
                     {formData.duration ? (
@@ -356,14 +364,10 @@ const AddInterns = () => {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500">
-                    Duration is automatically calculated from start and end
-                    dates
-                  </p>
                 </div>
               </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -437,9 +441,9 @@ const AddInterns = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={`p-4 rounded-lg mb-6 text-center font-medium ${
-                  formMessage.type === 'success'
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
+                  formMessage.type === "success"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
                 }`}
               >
                 {formMessage.text}
@@ -457,12 +461,14 @@ const AddInterns = () => {
                 disabled={loading}
                 whileHover={{
                   scale: loading ? 1 : 1.02,
-                  boxShadow: loading ? "none" : "0 10px 30px -10px rgba(79, 70, 229, 0.5)",
+                  boxShadow: loading
+                    ? "none"
+                    : "0 10px 30px -10px rgba(79, 70, 229, 0.5)",
                 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
                 className={`flex items-center space-x-3 px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl transition-all duration-200 font-semibold text-lg shadow-lg ${
-                  loading 
-                    ? "opacity-70 cursor-not-allowed" 
+                  loading
+                    ? "opacity-70 cursor-not-allowed"
                     : "hover:from-blue-700 hover:to-indigo-700"
                 }`}
               >
@@ -471,9 +477,7 @@ const AddInterns = () => {
                 ) : (
                   <Save className="w-5 h-5" />
                 )}
-                <span>
-                  {loading ? "Saving..." : "Save Internship Record"}
-                </span>
+                <span>{loading ? "Saving..." : "Save Internship Record"}</span>
               </motion.button>
             </motion.div>
           </form>
@@ -484,4 +488,3 @@ const AddInterns = () => {
 };
 
 export default AddInterns;
-

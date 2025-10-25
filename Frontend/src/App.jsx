@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import AddInterns from "./pages/AddInterns";
 import ViewInterns from "./pages/ViewInterns";
 
@@ -11,6 +13,8 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/add" element={<AddInterns />} />
           <Route path="/view" element={<ViewInterns />} />
         </Routes>

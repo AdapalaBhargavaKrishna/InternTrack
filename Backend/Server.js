@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const internshipRoutes = require("./routes/InternshipRoutes");
+const AuthRoutes = require("./routes/AuthRoutes");
 
 dotenv.config();
 
@@ -13,7 +14,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/internships", internshipRoutes);
+app.use("/internships", internshipRoutes);
+app.use("/auth", AuthRoutes);
 
 app.get("/", (req, res) => {
   res.send("Internship Management API is running...");
