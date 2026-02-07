@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ViewStatus from "./pages/student/ViewStatus";
-// import FacultyRecords from "./pages/faculty/Faculty";
 import FacultyDashboard from "./pages/faculty/Dashboard";
 import StudentDashboard from "./pages/student/Dashboard";
 

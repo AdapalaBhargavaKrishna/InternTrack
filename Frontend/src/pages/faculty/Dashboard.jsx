@@ -366,7 +366,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -508,7 +508,7 @@ const Dashboard = () => {
                           className="hover:bg-gray-50 transition-colors duration-150"
                         >
                           {statusUpdateId === intern._id ? (
-                            // Status Update Mode
+
                             <td colSpan="5" className="px-6 py-4">
                               <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
                                 <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
@@ -572,7 +572,6 @@ const Dashboard = () => {
                               </div>
                             </td>
                           ) : (
-                            // View Mode
                             <>
                               <td className="px-6 py-4">
                                 <div className="flex items-center space-x-3">
@@ -657,12 +656,11 @@ const Dashboard = () => {
                           )}
                         </motion.tr>
 
-                        {/* Expanded Details Row */}
                         {expandedRecord === intern._id && statusUpdateId !== intern._id && (
                           <tr>
                             <td colSpan="5" className="px-6 py-4 bg-gray-50">
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {/* Student Information */}
+
                                 <div className="bg-white p-4 rounded-lg border border-gray-200">
                                   <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                                     <UserCircle className="w-4 h-4 mr-2" /> Student Information
@@ -714,7 +712,6 @@ const Dashboard = () => {
                                   </div>
                                 </div>
 
-                                {/* Mentor Information */}
                                 <div className="bg-white p-4 rounded-lg border border-gray-200">
                                   <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                                     <UserCircle className="w-4 h-4 mr-2" /> Mentor Information

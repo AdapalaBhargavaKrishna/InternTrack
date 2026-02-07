@@ -65,7 +65,6 @@ const ViewStatus = () => {
 
     const itemsPerPageOptions = [5, 10, 20, 50];
 
-    // Fetch student's internships
     const fetchStudentInternships = async () => {
         if (!studentRollNumber) {
             toast.error("Please login first");
@@ -255,7 +254,6 @@ const ViewStatus = () => {
         navigate("/student");
     };
 
-    // Pagination functions
     const goToPage = (page) => {
         const maxPages = totalPages > 0 ? totalPages : 1;
         const newPage = Math.max(1, Math.min(page, maxPages));
@@ -285,7 +283,6 @@ const ViewStatus = () => {
         fetchStudentInternships();
     };
 
-    // Calculate duration if not present
     const calculateDuration = (startDate, endDate) => {
         if (!startDate || !endDate) return "N/A";
 
@@ -353,7 +350,6 @@ const ViewStatus = () => {
                     </div>
                 ) : (
                     <>
-                        {/* Records Table */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -580,7 +576,6 @@ const ViewStatus = () => {
                                 </table>
                             </div>
 
-                            {/* Pagination */}
                             {totalPages > 1 && (
                                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -638,7 +633,6 @@ const ViewStatus = () => {
                             )}
                         </motion.div>
 
-                        {/* Expanded Details Modal */}
                         <AnimatePresence>
                             {expandedRecord && (
                                 <motion.div
@@ -674,7 +668,7 @@ const ViewStatus = () => {
                                                     </div>
 
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                                        {/* Company Info */}
+
                                                         <div className="bg-gray-50 rounded-xl p-4">
                                                             <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
                                                                 <Building2 className="w-5 h-5" />
@@ -701,8 +695,6 @@ const ViewStatus = () => {
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        {/* Status Info */}
                                                         <div className="bg-gray-50 rounded-xl p-4">
                                                             <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
                                                                 <AlertCircle className="w-5 h-5" />
@@ -728,8 +720,6 @@ const ViewStatus = () => {
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        {/* Mentor Info */}
                                                         <div className="bg-gray-50 rounded-xl p-4 md:col-span-2">
                                                             <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
                                                                 <UserCircle className="w-5 h-5" />
@@ -776,7 +766,6 @@ const ViewStatus = () => {
                     </>
                 )}
 
-                {/* Delete Confirmation Modal */}
                 <AnimatePresence>
                     {deleteConfirm && (
                         <motion.div
