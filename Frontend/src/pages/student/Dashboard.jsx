@@ -40,24 +40,24 @@ const Dashboard = () => {
   ];
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const validateToken = async () => {
-  //     const token = sessionStorage.getItem("token");
-  //     if (!token) {
-  //       navigate("/login");
-  //       return;
-  //     }
-  //     try {
-  //       const res = await API.post("/auth/validate", { token });
-  //       if (!res.data.valid) {
-  //         navigate("/login");
-  //       }
-  //     } catch (err) {
-  //       navigate("/login");
-  //     }
-  //   };
-  //   validateToken();
-  // }, []);
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      try {
+        const res = await API.post("/auth/validate", { token });
+        if (!res.data.valid) {
+          navigate("/login");
+        }
+      } catch (err) {
+        navigate("/login");
+      }
+    };
+    validateToken();
+  }, []);
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
