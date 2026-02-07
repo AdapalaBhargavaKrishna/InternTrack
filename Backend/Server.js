@@ -23,7 +23,9 @@ app.use(
 
 connectDB();
 
-
+app.get("/", (req, res) => {
+    res.send("Internship Management API is running...");
+});
 app.use('/auth', authRoutes)
 app.use('/internships', internshipRoutes)
 
