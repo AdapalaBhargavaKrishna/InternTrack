@@ -5,8 +5,6 @@ const internshipRoutes = require("./routes/internships.js")
 const connectDB = require("./config/db.js")
 const cors = require("cors")
 
-
-
 dotenv.config();
 
 const app = express();
