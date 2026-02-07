@@ -1,4 +1,4 @@
-const Internship = require("../models/internship");
+const Internship = require("../models/internship.js ");
 const asyncHandler = require("express-async-handler");
 
 const addInternship = asyncHandler(async (req, res) => {
