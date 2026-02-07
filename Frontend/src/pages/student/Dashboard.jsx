@@ -10,12 +10,12 @@ import {
   Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import API from "../api";
+import API from "../../api";
 
-const AddInterns = () => {
+const Dashboard = () => {
   const [formData, setFormData] = useState({
     studentName: "",
-    rollNumber: "",
+    rollNumber: sessionStorage.getItem("rollNumber"),
     department: "",
     email: "",
     companyName: "",
@@ -40,24 +40,24 @@ const AddInterns = () => {
   ];
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const validateToken = async () => {
-      const token = sessionStorage.getItem("token");
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-      try {
-        const res = await API.post("/auth/validate", { token });
-        if (!res.data.valid) {
-          navigate("/login");
-        }
-      } catch (err) {
-        navigate("/login");
-      }
-    };
-    validateToken();
-  }, []);
+  // useEffect(() => {
+  //   const validateToken = async () => {
+  //     const token = sessionStorage.getItem("token");
+  //     if (!token) {
+  //       navigate("/login");
+  //       return;
+  //     }
+  //     try {
+  //       const res = await API.post("/auth/validate", { token });
+  //       if (!res.data.valid) {
+  //         navigate("/login");
+  //       }
+  //     } catch (err) {
+  //       navigate("/login");
+  //     }
+  //   };
+  //   validateToken();
+  // }, []);
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -114,6 +114,8 @@ const AddInterns = () => {
         mentorContact: "",
         mentorRole: "",
       });
+
+      console.log(response.data)
     } catch (error) {
       const message =
         error.response?.data?.message ||
@@ -125,7 +127,7 @@ const AddInterns = () => {
   };
 
   const handleViewRecords = () => {
-    navigate("/view");
+    navigate("/student/viewstatus");
   };
 
   return (
@@ -139,7 +141,7 @@ const AddInterns = () => {
         className="fixed top-6 right-6 z-50 flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white rounded-xl transition-colors font-medium shadow-lg border border-gray-500"
       >
         <Eye className="w-4 h-4" />
-        <span>View Records</span>
+        <span>View Status</span>
       </motion.button>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -440,11 +442,10 @@ const AddInterns = () => {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`p-4 rounded-lg mb-6 text-center font-medium ${
-                  formMessage.type === "success"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
+                className={`p-4 rounded-lg mb-6 text-center font-medium ${formMessage.type === "success"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+                  }`}
               >
                 {formMessage.text}
               </motion.div>
@@ -466,11 +467,10 @@ const AddInterns = () => {
                     : "0 10px 30px -10px rgba(79, 70, 229, 0.5)",
                 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
-                className={`flex items-center space-x-3 px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl transition-all duration-200 font-semibold text-lg shadow-lg ${
-                  loading
-                    ? "opacity-70 cursor-not-allowed"
-                    : "hover:from-blue-700 hover:to-indigo-700"
-                }`}
+                className={`flex items-center space-x-3 px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl transition-all duration-200 font-semibold text-lg shadow-lg ${loading
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:from-blue-700 hover:to-indigo-700"
+                  }`}
               >
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -487,4 +487,4 @@ const AddInterns = () => {
   );
 };
 
-export default AddInterns;
+export default Dashboard;

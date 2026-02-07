@@ -7,15 +7,18 @@ import API from "../api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
+  const [rollno, setRollno] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const user = new URLSearchParams(window.location.search).get("u");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
+    if (user === 'faculty' ? !email || !password : !rollno || !password) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -23,18 +26,27 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await API.post("/auth/login", {
-        email,
-        password,
-      });
+      let res;
+      if (user === 'faculty') {
+        res = await API.post("/auth/login/faculty", {
+          email,
+          password,
+        });
+      } else {
+        res = await API.post("/auth/login/student", {
+          roll: rollno,
+          password,
+        });
+      }
 
       const data = res.data;
-
+      console.log(data);
       sessionStorage.setItem("token", data.token);
-      sessionStorage.setItem("user", JSON.stringify(data.user));
+      sessionStorage.setItem("user", user);
+      sessionStorage.setItem("rollNumber", data.rollNumber);
 
       toast.success(data.message || "Login successful!");
-      setTimeout(() => navigate("/add"), 1500);
+      setTimeout(() => navigate(`/${user}`), 1500);
     } catch (error) {
       let message = "Login failed. Please try again.";
 
@@ -59,7 +71,7 @@ const Login = () => {
 
           <div className="relative z-10">
             <img src={logopng} className="w-56 h-14 invert" alt="Logo" />
-            <h1 className="text-3xl font-bold mb-3">Faculty Access</h1>
+            <h1 className="text-3xl font-bold mb-3">{user} Access</h1>
             <ul className="space-y-2 text-purple-100 text-sm">
               <li className="flex items-center">
                 <Check className="h-4 w-4 text-white mr-2" /> Manage internship
@@ -71,7 +83,7 @@ const Login = () => {
               </li>
               <li className="flex items-center">
                 <Check className="h-4 w-4 text-white mr-2" /> Secure access for
-                faculty only
+                {user} only
               </li>
             </ul>
           </div>
@@ -80,7 +92,7 @@ const Login = () => {
         <div className="w-full md:w-1/2 bg-white p-8 flex flex-col justify-center">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Faculty Login
+              {user} Login
             </h2>
             <p className="text-gray-600 text-sm">
               Enter your email and password to access the dashboard.
@@ -88,23 +100,43 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-gray-700 mb-1"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
-                placeholder="faculty@example.com"
-                required
-              />
-            </div>
+            {user === 'faculty' ?
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-1"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                  placeholder="faculty@example.com"
+                  required
+                />
+              </div>
+              :
+              <div>
+                <label
+                  htmlFor="id"
+                  className="block text-sm font-semibold text-gray-700 mb-1"
+                >
+                  ID
+                </label>
+                <input
+                  id="id"
+                  type="text"
+                  value={rollno}
+                  onChange={(e) => setRollno(e.target.value)}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                  placeholder="Roll number"
+                  required
+                />
+              </div>
+            }
 
             <div>
               <label
@@ -140,11 +172,10 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center items-center py-3 rounded-lg shadow text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition text-sm ${
-                isLoading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90"
-              }`}
+              className={`w-full flex justify-center items-center py-3 rounded-lg shadow text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition text-sm ${isLoading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90"
+                }`}
             >
               {isLoading ? (
                 <>
@@ -177,7 +208,7 @@ const Login = () => {
 
             <button
               type="button"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate(`/register?u=${user}`)}
               className="w-full text-center text-purple-700 font-medium hover:text-purple-800 transition text-sm"
             >
               Don't have an account? Register here

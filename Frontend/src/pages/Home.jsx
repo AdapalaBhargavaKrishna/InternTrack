@@ -38,27 +38,27 @@ function App() {
 
           <div className="flex items-center justify-center gap-8">
             <Link
-              to={"/login"}
+              to={"/login?u=student"}
               class="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-transparent px-6 font-medium text-neutral-600 transition-all duration-100 [box-shadow:-5px_5px_rgb(82_82_82)] hover:translate-x-[3px] hover:translate-y-[3px] hover:[box-shadow:-0px_0px_rgb(82_82_82)]"
             >
-              Add Internships
+              Student Login
               <span class="absolute inset-0 flex items-center justify-center overflow-hidden rounded-md">
                 <span class="absolute left-0 aspect-square w-full origin-center -translate-x-full rounded-full bg-green-700 transition-all duration-500 group-hover:-translate-x-0 group-hover:scale-150"></span>
                 <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
-                  Add Internships
+                  Student Login
                 </span>
               </span>
             </Link>
 
             <Link
-              to={"/login"}
+              to={"/login?u=faculty"}
               class="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-transparent px-6 font-medium text-neutral-600 transition-all duration-100 [box-shadow:5px_5px_rgb(82_82_82)] hover:translate-x-[-3px] hover:translate-y-[3px] hover:[box-shadow:0px_0px_rgb(82_82_82)]"
             >
-              View Internships
+              Faculty Login
               <span class="absolute inset-0 flex items-center justify-center overflow-hidden rounded-md">
                 <span class="absolute left-0 aspect-square w-full origin-center translate-x-full rounded-full bg-green-700 transition-all duration-500 group-hover:-translate-x-0 group-hover:scale-150"></span>
                 <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
-                  View Internships
+                  Faculty Login
                 </span>
               </span>
             </Link>

@@ -4,8 +4,10 @@ import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import AddInterns from "./pages/AddInterns";
-import ViewInterns from "./pages/ViewInterns";
+import ViewStatus from "./pages/student/ViewStatus";
+// import FacultyRecords from "./pages/faculty/Faculty";
+import FacultyDashboard from "./pages/faculty/Dashboard";
+import StudentDashboard from "./pages/student/Dashboard";
 
 const App = () => {
   return (
@@ -15,8 +17,11 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/add" element={<AddInterns />} />
-          <Route path="/view" element={<ViewInterns />} />
+
+          <Route path="/faculty" element={<FacultyDashboard />} />
+
+          <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/student/viewstatus" element={<ViewStatus />} />
         </Routes>
       </Router>
 

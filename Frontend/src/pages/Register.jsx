@@ -8,26 +8,38 @@ import logopng from "../assets/logo.png";
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [rollno, setRollno] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const navigate = useNavigate();
 
+  const user = new URLSearchParams(window.location.search).get("u");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const res = await API.post("/auth/register", {
-        username,
-        email,
-        password,
-      });
+      let res;
+      if (user === 'faculty') {
+        res = await API.post("/auth/register/faculty", {
+          name: username,
+          email,
+          password,
+        });
+      } else {
+        res = await API.post("/auth/register/student", {
+          name: username,
+          roll: rollno,
+          password,
+        });
+      }
 
       setRegisterSuccess(true);
       toast.success(res.data.message || "Registered successfully!");
-      setTimeout(() => navigate("/login"), 1500);
+      setTimeout(() => navigate(`/login?u=${user}`), 1500);
     } catch (error) {
       let message = "Registration failed: An unknown error occurred.";
 
@@ -57,10 +69,10 @@ const Register = () => {
 
           <div className="relative z-10">
             <img src={logopng} className="w-56 h-14" alt="Logo" />
-            <h1 className="text-3xl font-bold mb-3">Faculty Registration</h1>
+            <h1 className="text-3xl font-bold mb-3">{user} Registration</h1>
             <ul className="space-y-2 text-green-100 text-sm">
               <li className="flex items-center">
-                <Check className="h-4 w-4 text-white mr-2" /> Secure faculty
+                <Check className="h-4 w-4 text-white mr-2" /> Secure {user}
                 account
               </li>
               <li className="flex items-center">
@@ -78,10 +90,10 @@ const Register = () => {
         <div className="w-full md:w-1/2 bg-white p-8 flex flex-col justify-center">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Faculty Registration
+              {user} Registration
             </h2>
             <p className="text-gray-600 text-sm">
-              Enter your details to create a new faculty account.
+              Enter your details to create a new {user} account.
             </p>
           </div>
 
@@ -104,23 +116,43 @@ const Register = () => {
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-gray-700 mb-1"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
-                placeholder="faculty@example.com"
-                required
-              />
-            </div>
+            {user === 'faculty' ?
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-1"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                  placeholder="faculty@example.com"
+                  required
+                />
+              </div>
+              :
+              <div>
+                <label
+                  htmlFor="id"
+                  className="block text-sm font-semibold text-gray-700 mb-1"
+                >
+                  Enter ID
+                </label>
+                <input
+                  id="id"
+                  type="text"
+                  value={rollno}
+                  onChange={(e) => setRollno(e.target.value)}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                  placeholder="Enter your Roll number"
+                  required
+                />
+              </div>
+            }
 
             <div>
               <label
@@ -156,22 +188,21 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center items-center py-3 rounded-lg shadow text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition text-sm ${
-                isLoading || registerSuccess
-                  ? "bg-green-700 hover:bg-green-800"
-                  : "bg-gradient-to-r from-green-600 to-green-400 hover:opacity-90"
-              }`}
+              className={`w-full flex justify-center items-center py-3 rounded-lg shadow text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition text-sm ${isLoading || registerSuccess
+                ? "bg-green-700 hover:bg-green-800"
+                : "bg-gradient-to-r from-green-600 to-green-400 hover:opacity-90"
+                }`}
             >
               {isLoading
                 ? "Registering..."
                 : registerSuccess
-                ? "Registered!"
-                : "Register"}
+                  ? "Registered!"
+                  : "Register"}
             </button>
 
             <button
               type="button"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(`/login?u=${user}`)}
               className="w-full flex justify-center items-center py-3 rounded-lg shadow text-green-700 font-medium border border-green-600 hover:bg-green-50 transition text-sm"
             >
               Back to Login
