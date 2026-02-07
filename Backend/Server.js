@@ -1,28 +1,25 @@
 const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const connectDB = require("./config/db");
-const internshipRoutes = require("./routes/InternshipRoutes");
-const AuthRoutes = require("./routes/AuthRoutes");
+const dotenv = require("dotenv")
+const authRoutes = require("./routes/auth.js")
+const internshipRoutes = require("./routes/internships.js")
+const connectDB = require("./config/db.js")
+const cors = require("cors")
+
+
 
 dotenv.config();
 
+const app = express();
+app.use(express.json());
+app.use(cors());
 connectDB();
 
-const app = express();
 
-app.use(cors());
-app.use(express.json());
-
-app.use("/internships", internshipRoutes);
-app.use("/auth", AuthRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Internship Management API is running...");
-});
+app.use('/auth', authRoutes)
+app.use('/internships', internshipRoutes)
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
