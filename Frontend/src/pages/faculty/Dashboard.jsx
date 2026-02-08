@@ -78,33 +78,45 @@ const Dashboard = () => {
   const itemsPerPageOptions = [5, 10, 20, 50];
 
   useEffect(() => {
-    const validateToken = async () => {
+    const checkAuth = async () => {
       const token = sessionStorage.getItem("token");
+
       if (!token) {
         navigate("/login?u=faculty");
         return;
       }
+
       try {
-        const res = await API.post("/auth/validate", { token });
-        if (!res.data.valid) {
+        const res = await API.get("/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.data.role !== "faculty") {
+          toast.error("Unauthorized access");
           navigate("/login?u=faculty");
         }
-      } catch (err) {
+      } catch (error) {
         navigate("/login?u=faculty");
       }
     };
-    validateToken();
-  }, []);
+
+    checkAuth();
+  }, [navigate]);
 
   const fetchAllInterns = async () => {
     setLoading(true);
     try {
       const response = await API.get("/internships");
       setAllInterns(response.data);
-      toast.success(`Loaded ${response.data.length} records`);
     } catch (error) {
-      console.error("Failed to fetch interns:", error);
-      toast.error("Failed to load records");
+      if (error.response?.status === 403) {
+        toast.error("You are not authorized to view this page");
+        navigate("/login?u=faculty");
+      } else {
+        toast.error("Failed to load records");
+      }
       setAllInterns([]);
     } finally {
       setLoading(false);

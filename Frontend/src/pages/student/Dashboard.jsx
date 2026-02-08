@@ -41,23 +41,32 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const validateToken = async () => {
+    const checkAuth = async () => {
       const token = sessionStorage.getItem("token");
+
       if (!token) {
-        navigate("/login");
+        navigate("/login?u=student");
         return;
       }
+
       try {
-        const res = await API.post("/auth/validate", { token });
-        if (!res.data.valid) {
-          navigate("/login");
+        const res = await API.get("/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.data.role !== "student") {
+          navigate("/login?u=student");
         }
-      } catch (err) {
-        navigate("/login");
+      } catch (error) {
+        navigate("/login?u=student");
       }
     };
-    validateToken();
-  }, []);
+
+    checkAuth();
+  }, [navigate]);
+
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -117,10 +126,18 @@ const Dashboard = () => {
 
       console.log(response.data)
     } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        "Failed to save record. Please try again.";
-      setFormMessage({ type: "error", text: message });
+      if (error.response?.status === 403) {
+        setFormMessage({
+          type: "error",
+          text: "You are not authorized to perform this action",
+        });
+        navigate("/login");
+      } else {
+        const message =
+          error.response?.data?.message ||
+          "Failed to save record. Please try again.";
+        setFormMessage({ type: "error", text: message });
+      }
     } finally {
       setLoading(false);
     }

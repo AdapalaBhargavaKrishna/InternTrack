@@ -65,6 +65,36 @@ const ViewStatus = () => {
 
     const itemsPerPageOptions = [5, 10, 20, 50];
 
+    useEffect(() => {
+        const checkAuth = async () => {
+            const token = sessionStorage.getItem("token");
+
+            if (!token) {
+                navigate("/login?u=student");
+                return;
+            }
+
+            try {
+                const res = await API.get("/auth/me");
+
+                if (res.data.role !== "student") {
+                    toast.error("Unauthorized access");
+                    navigate("/");
+                    return;
+                }
+
+                if (res.data.rollNumber) {
+                    sessionStorage.setItem("rollNumber", res.data.rollNumber);
+                }
+            } catch (error) {
+                navigate("/login?u=student");
+            }
+        };
+
+        checkAuth();
+    }, [navigate]);
+
+
     const fetchStudentInternships = async () => {
         if (!studentRollNumber) {
             toast.error("Please login first");
